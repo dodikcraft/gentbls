@@ -1,0 +1,123 @@
+#include <fstream>
+#include <iostream>
+
+using namespace std;
+
+// Структура дроби
+struct frac {
+    long a, b;
+};
+
+// Модуль a
+long myabs(long a) { return a < 0 ? -a : a; }
+
+// Процедура ввода
+int input()
+{
+    int n;
+    for (;;) {
+        std::cout << "Введите n > ";
+        std::cin >> n;
+        if (n < 1)
+            std::cout << "! Введённое значение должно быть большим или равным "
+                         "единице.\n";
+        else if (n > 17)
+            std::cout << "Введённое значение не должно приводить к переполнению\n";
+        else if (std::cin.fail())
+            std::cout << "! Ошибка данных, повторите ввод.\n";
+        else
+            break;
+    }
+    return n;
+}
+
+// Число десятичных разрядов в a
+int places(long a)
+{
+    int r = 0;
+    a = myabs(a);
+    while (a > 0) {
+        a /= 10;
+        r++;
+    }
+    return r;
+}
+
+// Наименьший общий делитель a и b
+long gcd(long a, long b)
+{
+    a = myabs(a);
+    b = myabs(b);
+    while (a * b != 0) {
+        if (a > b)
+            a %= b;
+        else
+            b %= a;
+    }
+    return a + b;
+}
+
+// Сокращение дроби
+void compact(struct frac &f)
+{
+    long c = gcd(f.a, f.b);
+    f.a /= c;
+    f.b /= c;
+}
+
+// сумма дробей f и g с выводом промежуточных результатов
+void fracadd(struct frac &f, struct frac g)
+{
+    f.a = f.a * g.b + f.b * g.a;
+    f.b *= g.b;
+    compact(f);
+}
+
+// вывод дроби
+void display(struct frac f)
+{
+    if (f.a < 0)
+        cout << "  ";
+    cout << myabs(f.a) << endl;
+    if (f.a < 0)
+        cout << "- ";
+    long p = places(myabs(f.a) > myabs(f.b) ? f.a : f.b);
+    for (; p > 0; p--)
+        cout << "-";
+    cout << endl;
+    if (f.a < 0)
+        cout << "  ";
+    cout << f.b << endl;
+}
+
+// Вычислить n-ый член последовательности
+struct frac seq(int n)
+{
+    struct frac f;
+    f.a = 1;
+    f.b = 1;
+    int i;
+    for (i = 1; i < n; i++) {
+        f.a *= i;
+        fracadd(f, (struct frac){
+                       -1, i}); //анонимная структура потому что мне лень писать
+        cout << f.a << "/" << f.b << " ->\n";
+    }
+    return f;
+}
+
+int main()
+{
+    //om Файл для вывода
+    fstream file = new fstream("out.txt", ios_base::out); 
+    //i Номер члена последовательности
+    int n = input();
+    //om Целевая дробь
+    struct frac f = seq(n);
+    cout << "Ответ:\n";
+    display(f);
+    cout.rdbuf(
+        file.rdbuf()); // теперь весь вывод в cout будет писаться в файл))0
+    display(f);        // печатаем в файл
+    return 0;
+}
