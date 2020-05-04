@@ -32,7 +32,6 @@ const latexpreamble = `% Эта таблица была сгенерирован
 
 var filename = flag.String("f", "", "filename")
 var descsw = flag.String("d", "var", "print table of [func]tions or [var]iables")
-var outfsw = flag.String("o", "latex", "output [docx] or [latex]")
 
 //https://regex101.com/r/om4MWI/1
 var fnc = re.MustCompile(`//(?:/|\s)*(.*)\n(` +
@@ -53,7 +52,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if descsw == nil || outfsw == nil {
+	if descsw == nil {
 		print("Usage:\n")
 		flag.PrintDefaults()
 		os.Exit(1)
@@ -64,59 +63,55 @@ func main() {
 
 	if *descsw == "var" {
 		varmatch := vari.FindAllSubmatch(file, -1)
-		if *outfsw == "latex" {
-			{
-				println(latexpreamble + `\noindent\begin{longtabu}{|X[1,l]|X[1,l]|X[3,l]|X[2,l]|}
+
+		{
+			println(latexpreamble + `\noindent\begin{longtabu}{|X[1,l]|X[1,l]|X[3,l]|X[2,l]|}
 \caption{Описание используемых переменных}\\\hline
 \GTBcch{\bf Имя} & \GTBcct{\bf Тип} & \GTBcct{\bf Описание} & \GTBcct{\bf Направление}
 \GTBnr\endfirsthead
 \caption*{Продолжение таблицы \ref{ftbl` + tblref /* блять */ + `}}\\\hline%
 \GTBcch{\bf Имя} & \GTBcct{\bf Тип} & \GTBcct{\bf Описание} & \cct{\bf Направление} 
 \GTBnr\endhead`)
-			}
-			for _, match := range varmatch {
-				print(string(match[4]))
-				print(` & `)
-				print(string(match[3]))
-				print(` & `)
-				print(string(match[2]))
-				print(` & `)
-				if bytes.ContainsRune(match[1], 'i') {
-					print(`входная, `)
-				}
-				if bytes.ContainsRune(match[1], 'o') {
-					print(`выходная, `)
-				}
-				if bytes.ContainsRune(match[1], 'm') {
-					print(`промежуточная`)
-				}
-				println(`\GTBnr`)
-			}
-			println(`\label{ftbl` + tblref + `}\GTBnr\end{longtabu}`)
-		} else if *outfsw == "docx" {
-			println("Waiting for Andrew... (tbd)")
 		}
+
+		for _, match := range varmatch {
+			print(string(match[4]))
+			print(` & `)
+			print(string(match[3]))
+			print(` & `)
+			print(string(match[2]))
+			print(` & `)
+			if bytes.ContainsRune(match[1], 'i') {
+				print(`входная, `)
+			}
+			if bytes.ContainsRune(match[1], 'o') {
+				print(`выходная, `)
+			}
+			if bytes.ContainsRune(match[1], 'm') {
+				print(`промежуточная`)
+			}
+			println(`\GTBnr`)
+		}
+		println(`\label{ftbl` + tblref + `}\GTBnr\end{longtabu}`)
+
 	} else if *descsw == "func" {
 		fncmatch := fnc.FindAllSubmatch(file, -1)
-		if *outfsw == "latex" {
-			{
-				println(latexpreamble + `\noindent\begin{longtabu}{|X[3,l]|X[4,l]|}
+
+		{
+			println(latexpreamble + `\noindent\begin{longtabu}{|X[3,l]|X[4,l]|}
 \caption{Функции, обеспечивающие работу программы}\\\hline
 \GTBcch{\bf Имя} & \GTBcct{\bf Описание}\GTBnr\endfirsthead
 \caption*{Продолжение таблицы \ref{dtbl` + tblref /* ты понял */ + `}}\\\hline
 \GTBcch{\bf Имя} & \GTBcct{\bf Описание}\GTBnr\endhead`)
-			}
-			for _, match := range fncmatch {
-				print(`\tt `)
-				print(string(match[2]))
-				print(` & `)
-				print(string(match[1]))
-				println(`\GTBnr`)
-			}
-			println(`\label{dtbl` + tblref + `}\GTBnr\end{longtabu}`)
-		} else if *outfsw == "docx" {
-			println("Waiting for Andrew... (tbd)")
 		}
-	}
 
+		for _, match := range fncmatch {
+			print(`\tt `)
+			print(string(match[2]))
+			print(` & `)
+			print(string(match[1]))
+			println(`\GTBnr`)
+		}
+		println(`\label{dtbl` + tblref + `}\GTBnr\end{longtabu}`)
+	}
 }
