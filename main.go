@@ -7,6 +7,7 @@ package main
 import (
 	"bytes"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -46,14 +47,14 @@ func main() {
 
 	file, err := ioutil.ReadFile(*filename)
 	if err != nil {
-		println(err.Error())
-		print("Usage:\n")
+		fmt.Println(err.Error())
+		fmt.Print("Usage:\n")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
 	if descsw == nil {
-		print("Usage:\n")
+		fmt.Print("Usage:\n")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
@@ -65,7 +66,7 @@ func main() {
 		varmatch := vari.FindAllSubmatch(file, -1)
 
 		{
-			println(latexpreamble + `\noindent\begin{longtabu}{|X[1,l]|X[1,l]|X[3,l]|X[2,l]|}
+			fmt.Println(latexpreamble + `\noindent\begin{longtabu}{|X[1,l]|X[1,l]|X[3,l]|X[2,l]|}
 \caption{Описание используемых переменных}\\\hline
 \GTBcch{\bf Имя} & \GTBcct{\bf Тип} & \GTBcct{\bf Описание} & \GTBcct{\bf Направление}
 \GTBnr\endfirsthead
@@ -75,30 +76,30 @@ func main() {
 		}
 
 		for _, match := range varmatch {
-			print(string(match[4]))
-			print(` & `)
-			print(string(match[3]))
-			print(` & `)
-			print(string(match[2]))
-			print(` & `)
+			fmt.Print(string(match[4]))
+			fmt.Print(` & `)
+			fmt.Print(string(match[3]))
+			fmt.Print(` & `)
+			fmt.Print(string(match[2]))
+			fmt.Print(` & `)
 			if bytes.ContainsRune(match[1], 'i') {
-				print(`входная, `)
+				fmt.Print(`входная, `)
 			}
 			if bytes.ContainsRune(match[1], 'o') {
-				print(`выходная, `)
+				fmt.Print(`выходная, `)
 			}
 			if bytes.ContainsRune(match[1], 'm') {
-				print(`промежуточная`)
+				fmt.Print(`промежуточная`)
 			}
-			println(`\GTBnr`)
+			fmt.Println(`\GTBnr`)
 		}
-		println(`\label{ftbl` + tblref + `}\GTBnr\end{longtabu}`)
+		fmt.Println(`\label{ftbl` + tblref + `}\GTBnr\end{longtabu}`)
 
 	} else if *descsw == "func" {
 		fncmatch := fnc.FindAllSubmatch(file, -1)
 
 		{
-			println(latexpreamble + `\noindent\begin{longtabu}{|X[3,l]|X[4,l]|}
+			fmt.Println(latexpreamble + `\noindent\begin{longtabu}{|X[3,l]|X[4,l]|}
 \caption{Функции, обеспечивающие работу программы}\\\hline
 \GTBcch{\bf Имя} & \GTBcct{\bf Описание}\GTBnr\endfirsthead
 \caption*{Продолжение таблицы \ref{dtbl` + tblref /* ты понял */ + `}}\\\hline
@@ -106,12 +107,12 @@ func main() {
 		}
 
 		for _, match := range fncmatch {
-			print(`\tt `)
-			print(string(match[2]))
-			print(` & `)
-			print(string(match[1]))
-			println(`\GTBnr`)
+			fmt.Print(`\tt `)
+			fmt.Print(string(match[2]))
+			fmt.Print(` & `)
+			fmt.Print(string(match[1]))
+			fmt.Println(`\GTBnr`)
 		}
-		println(`\label{dtbl` + tblref + `}\GTBnr\end{longtabu}`)
+		fmt.Println(`\label{dtbl` + tblref + `}\GTBnr\end{longtabu}`)
 	}
 }
