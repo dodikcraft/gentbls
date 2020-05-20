@@ -75,7 +75,7 @@ func main() {
 \GTBnr\endhead`)
 		}
 
-		for _, match := range varmatch {
+		for j, match := range varmatch {
 			fmt.Print(string(match[4]))
 			fmt.Print(` & `)
 			fmt.Print(string(match[3]))
@@ -91,7 +91,9 @@ func main() {
 			if bytes.ContainsRune(match[1], 'm') {
 				fmt.Print(`промежуточная`)
 			}
-			fmt.Println(`\GTBnr`)
+			if j < len(varmatch) {
+				fmt.Println(`\GTBnr`)
+			}
 		}
 		fmt.Println(`\label{ftbl` + tblref + `}\GTBnr\end{longtabu}`)
 
@@ -106,12 +108,14 @@ func main() {
 \GTBcch{\bf Имя} & \GTBcct{\bf Описание}\GTBnr\endhead`)
 		}
 
-		for _, match := range fncmatch {
+		for j, match := range fncmatch {
 			fmt.Print(`\tt `)
 			fmt.Print(string(match[2]))
 			fmt.Print(` & `)
 			fmt.Print(string(match[1]))
-			fmt.Println(`\GTBnr`)
+			if j < len(fncmatch) {
+				fmt.Println(`\GTBnr`)
+			}
 		}
 		fmt.Println(`\label{dtbl` + tblref + `}\GTBnr\end{longtabu}`)
 	}
