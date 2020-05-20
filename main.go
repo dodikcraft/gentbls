@@ -91,7 +91,7 @@ func main() {
 			if bytes.ContainsRune(match[1], 'm') {
 				fmt.Print(`промежуточная`)
 			}
-			if j < len(varmatch) {
+			if j < len(varmatch)-1 {
 				fmt.Println(`\GTBnr`)
 			}
 		}
@@ -113,7 +113,7 @@ func main() {
 			fmt.Print(string(match[2]))
 			fmt.Print(` & `)
 			fmt.Print(string(match[1]))
-			if j < len(fncmatch) {
+			if j < len(fncmatch)-1 {
 				fmt.Println(`\GTBnr`)
 			}
 		}
