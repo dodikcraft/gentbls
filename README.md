@@ -21,4 +21,4 @@
 
 тесты воруй
 
-**upd** docx теперь генерит другой дядя обращайтесь к нему t.me/foxeri 
+**upd** docx теперь генерит другой дядя https://github.com/f0xeri/auto-docs-astu вот тут
